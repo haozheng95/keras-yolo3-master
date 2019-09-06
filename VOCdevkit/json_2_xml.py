@@ -32,36 +32,54 @@ layout = {
             "depth": 1,
         },
         "segmented": 0,
-        "object": {
-            "name": "neg",
-            "pose": "Unspecified",
-            "truncated": 0,
-            "difficult": 0,
-            "bndbox": {
-                "xmin": 690,
-                "ymin": 548,
-                "xmax": 1395,
-                "ymax": 653,
-            }
-        }
+        "object": []
     }
 }
 
 
-def json_set(folder, filename, path, width, height, name, xmin, ymin, xmax, ymax):
+#
+# object_str = """
+# 	<object>
+# 		<name>%s</name>
+# 		<pose>Unspecified</pose>
+# 		<truncated>0</truncated>
+# 		<difficult>0</difficult>
+# 		<bndbox>
+# 			<xmin>%d</xmin>
+# 			<ymin>%d</ymin>
+# 			<xmax>%d</xmax>
+# 			<ymax>%d</ymax>
+# 		</bndbox>
+# 	</object>
+# """
+
+# name, xmin, ymin, xmax, ymax
+def json_set(folder, filename, path, width, height, objects):
     layout["annotation"]["folder"] = folder
     layout["annotation"]["filename"] = filename
     layout["annotation"]["path"] = path
 
     layout["annotation"]["size"]["width"] = width
     layout["annotation"]["size"]["height"] = height
+    objects_data = []
 
-    layout["annotation"]["object"]["name"] = name
+    for line in objects:
+        bndbox = dict(
+            xmin=line["xmin"],
+            ymin=line["ymin"],
+            xmax=line["xmax"],
+            ymax=line["ymax"]
+        )
+        row = dict(
+            name=line["name"],
+            pose="Unspecified",
+            truncated=0,
+            difficult=0,
+            bndbox=bndbox,
+        )
+        objects_data.append(row)
 
-    layout["annotation"]["object"]["bndbox"]["xmin"] = xmin
-    layout["annotation"]["object"]["bndbox"]["ymin"] = ymin
-    layout["annotation"]["object"]["bndbox"]["xmax"] = xmax
-    layout["annotation"]["object"]["bndbox"]["ymax"] = ymax
+    layout["annotation"]["object"] = objects_data
 
     return layout
 
@@ -74,15 +92,25 @@ def jsontoxml(jsonstr):
 
 test = [
     {
-        "name": "193fdcc3b541bd4c0807102214.jpg",
-        "defect_name": "\u65ad\u6c28\u7eb6",
+        "name": "9cc16f823cf576e50812117853.jpg",
+        "defect_name": "\u4fee\u75d5",
         "bbox": [
-            507.61,
-            810.27,
-            524.61,
-            821.6
+            118.58,
+            8.74,
+            144.14,
+            998.15
         ]
-    }
+    },
+    {
+        "name": "9cc16f823cf576e50812117853.jpg",
+        "defect_name": "\u4fee\u75d5",
+        "bbox": [
+            171.52,
+            6.92,
+            208.06,
+            997.0
+        ]
+    },
 ]
 
 
@@ -104,28 +132,42 @@ def save_xml(xml_str, file):
 
 def main(data):
     p = parser(data)
-    count = 0
+    group_data = dict()
     for row in p:
+        object_data = [
+            dict(name=row[1],
+                 xmin=row[2][0],
+                 ymin=row[2][1],
+                 xmax=row[2][2],
+                 ymax=row[2][3], )
+        ]
         kwargs = dict(
             folder="image",
             filename=row[0],
             path=os.path.join(JPEGImages_path, row[0]),
             width=2446,
             height=1000,
-            name=row[1],
-            xmin=row[2][0],
-            ymin=row[2][1],
-            xmax=row[2][2],
-            ymax=row[2][3],
+            objects=object_data
         )
+
+        if kwargs["filename"] in group_data:
+            group_data[kwargs["filename"]]["objects"].append(kwargs["objects"][0])
+        else:
+            group_data[kwargs["filename"]] = kwargs
+
+    count = 0
+    for k in group_data:
+        kwargs = group_data[k]
         jsonstr = json_set(**kwargs)
         xmlstr = jsontoxml(jsonstr)
-        save_xml(xmlstr, os.path.join(Annotations_path, row[0][:-3] + "xml"))
+        save_xml(xmlstr, os.path.join(Annotations_path, kwargs["filename"][:-3] + "xml"))
         count += 1
     print("xml file count = %d" % count)
 
 
 if __name__ == "__main__":
+    # s = jsontoxml(layout)
+    # save_xml(s, os.path.join(Annotations_path, "t.xml"))
     json_data = get_json_data()
     main(json_data)
     print("json data length = %d" % len(json_data))
