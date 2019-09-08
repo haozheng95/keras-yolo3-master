@@ -73,7 +73,6 @@ def _main():
         print("Train longer if the result is not good")
         # sgd = optimizers.SGD(lr=0.0001, decay=1e-6, momentum=0.9, nesterov=True)
         for i in range(len(model.layers)):
-            K.clear_session()
             model.layers[i].trainable = True
         model.compile(optimizer=Adam(lr=1e-4), loss={'yolo_loss': lambda y_true, y_pred: y_pred}) # recompile to apply the change
         # model.compile(optimizer=sgd, loss={'yolo_loss': lambda y_true, y_pred: y_pred})
