@@ -70,6 +70,7 @@ def _main():
     # Unfreeze and continue training, to fine-tune.
     # Train longer if the result is not good.
     if True:
+        print("Train longer if the result is not good")
         # sgd = optimizers.SGD(lr=0.0001, decay=1e-6, momentum=0.9, nesterov=True)
         for i in range(len(model.layers)):
             K.clear_session()
