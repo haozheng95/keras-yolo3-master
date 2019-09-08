@@ -75,6 +75,7 @@ def _main():
         # sgd = optimizers.SGD(lr=0.0001, decay=1e-6, momentum=0.9, nesterov=True)
         for i in range(len(model.layers)):
             model.layers[i].trainable = True
+        print("model.compile ")
         model.compile(optimizer=Adam(lr=1e-4), loss={'yolo_loss': lambda y_true, y_pred: y_pred}) # recompile to apply the change
         # model.compile(optimizer=sgd, loss={'yolo_loss': lambda y_true, y_pred: y_pred})
         print('Unfreeze all of the layers.')
@@ -88,7 +89,9 @@ def _main():
             epochs=40,
             initial_epoch=15,
             callbacks=[logging, checkpoint, reduce_lr, early_stopping])
+        print("start model.save_weights")
         model.save_weights(log_dir + 'trained_weights_final.h5')
+        print("end")
 
     # Further training if needed.
 
