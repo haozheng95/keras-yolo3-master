@@ -29,7 +29,7 @@ def detect_img(yolo):
                     name=file,
                     category=j,
                     bbox=boxes[i],
-                    score=scores,
+                    score=scores[i],
                 )
                 i += 1
                 print(temp_result)
