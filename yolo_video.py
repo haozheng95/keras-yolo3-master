@@ -13,6 +13,7 @@ test_path = os.path.join(base_path, "test")
 
 
 def detect_img(yolo):
+    result_json = []
     with open("result_11_25_2.txt", "w") as f:
         k = 0
         # for i in range(50803):
@@ -22,9 +23,20 @@ def detect_img(yolo):
             img = Image.open(path)
             print(path)
             img, boxes, scores, classes = yolo.detect_image(img)
-            print(boxes)
-            print("类别为：", classes)
-            print(file)
+            i = 0
+            for j in classes:
+                temp_result = dict(
+                    name=file,
+                    category=j,
+                    bbox=boxes[i],
+                    score=scores,
+                )
+                i += 1
+                print(temp_result)
+
+            # print(boxes)
+            # print("类别为：", classes)
+            # print(file)
             save_path = os.path.join(image_path, file)
             save_path_2 = os.path.join(image_not_path, file)
             if (len(boxes) > 0):
