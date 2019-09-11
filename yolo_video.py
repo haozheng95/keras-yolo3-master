@@ -1,6 +1,7 @@
 import sys
 import argparse
 
+import numpy
 from pandas._libs import json
 
 from yolo import YOLO, detect_video
@@ -33,7 +34,7 @@ def detect_img(yolo):
                 temp_result = dict(
                     name=file,
                     category=j,
-                    bbox=[round(x, 2) for x in boxes[i]],
+                    bbox=numpy.around(boxes, decimals=2),
                     score=scores[i],
                 )
                 i += 1
