@@ -17,6 +17,7 @@ test_path = os.path.join(base_path, "test")
 
 def detect_img(yolo):
     result_json = []
+    not_cont = 0
     with open("result_11_25_2.txt", "w") as f:
         k = 0
         # for i in range(50803):
@@ -38,6 +39,8 @@ def detect_img(yolo):
                 i += 1
                 print(json.dumps(temp_result))
                 result_json.append(temp_result)
+            if i > 0:
+                not_cont += 1
 
             # print(boxes)
             # print("类别为：", classes)
@@ -78,6 +81,7 @@ def detect_img(yolo):
     with open("result.json", "w") as f:
         f.write(res)
     print("save over")
+    print(not_cont)
 
 
 # 这个代码可以进行单张图像的显示
