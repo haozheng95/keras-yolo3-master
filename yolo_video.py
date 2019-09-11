@@ -32,7 +32,7 @@ def detect_img(yolo):
                 temp_result = dict(
                     name=file,
                     category=j,
-                    bbox=boxes[i],
+                    bbox=[round(x, 2) for x in boxes[i]],
                     score=scores[i],
                 )
                 i += 1
