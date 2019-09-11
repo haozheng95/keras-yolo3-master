@@ -75,6 +75,9 @@ def detect_img(yolo):
         print(k)
     yolo.close_session()
     res = json.dumps(result_json)
+    with open("result.json", "w") as f:
+        f.write(res)
+    print("save over")
 
 
 # 这个代码可以进行单张图像的显示
