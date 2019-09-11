@@ -1,5 +1,8 @@
 import sys
 import argparse
+
+from pandas._libs import json
+
 from yolo import YOLO, detect_video
 from PIL import Image
 
@@ -23,6 +26,7 @@ def detect_img(yolo):
             img = Image.open(path)
             print(path)
             img, boxes, scores, classes = yolo.detect_image(img)
+
             i = 0
             for j in classes:
                 temp_result = dict(
@@ -32,7 +36,8 @@ def detect_img(yolo):
                     score=scores[i],
                 )
                 i += 1
-                print(temp_result)
+                print(json.dumps(temp_result))
+                result_json.append(temp_result)
 
             # print(boxes)
             # print("类别为：", classes)
@@ -69,6 +74,7 @@ def detect_img(yolo):
 
         print(k)
     yolo.close_session()
+    res = json.dumps(result_json)
 
 
 # 这个代码可以进行单张图像的显示
