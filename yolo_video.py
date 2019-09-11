@@ -34,7 +34,7 @@ def detect_img(yolo):
                 temp_result = dict(
                     name=file,
                     category=j,
-                    bbox=numpy.around(boxes, decimals=2),
+                    bbox=numpy.around(boxes[i], decimals=2),
                     score=scores[i],
                 )
                 i += 1
