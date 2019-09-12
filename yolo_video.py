@@ -34,6 +34,7 @@ def detect_img(yolo):
                 if j > 20 or j < 0:
                     print(".......j", j)
                     j = 0
+                    return
                 temp_result = dict(
                     name=file,
                     category=j,
